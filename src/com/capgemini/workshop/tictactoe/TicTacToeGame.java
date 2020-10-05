@@ -1,20 +1,21 @@
 package com.capgemini.workshop.tictactoe;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class TicTacToeGame {
 	private static final char EMPTY = ' ';
 	private static final char CROSS = 'X';
 	private static final char ROUND = 'O';
+
 	private char playerSymbol;
 	private char computerSymbol;
-
 	private char[] board;
 
 	TicTacToeGame() {
 		board = new char[10];
-		for (int i = 0; i < board.length; i++)
-			this.board[i] = EMPTY;
+		Arrays.fill(board, EMPTY);
+
 	}
 
 	private static int getIndex(int row, int col) {
@@ -36,6 +37,21 @@ public class TicTacToeGame {
 		return playerSymbol;
 	}
 
+	public void showBoard() {
+		for (int i = 1; i <= 3; i++) {
+			for (int j = 1; j <= 3; j++) {
+				if (j == 3)
+					System.out.print(board[getIndex(i, j)]);
+				else
+					System.out.print(board[getIndex(i, j)] + " | ");
+
+			}
+			System.out.println("");
+			if (i != 3)
+				System.out.println("---------");
+		}
+	}
+
 	public static void main(String[] args) {
 		TicTacToeGame game = new TicTacToeGame();
 		Scanner sc = new Scanner(System.in);
@@ -43,6 +59,7 @@ public class TicTacToeGame {
 		String symbol = sc.next();
 		game.choosePlayerSymbol(symbol.charAt(0));
 		System.out.println("Player has chosen: " + game.getPlayerSymbol());
+		game.showBoard();
 		sc.close();
 
 	}
