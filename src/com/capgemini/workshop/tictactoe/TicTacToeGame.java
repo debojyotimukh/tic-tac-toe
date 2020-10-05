@@ -44,22 +44,28 @@ public class TicTacToeGame {
 	}
 
 	/**
-	 * @return The player symbol character
+	 * Check if a position is free or not
+	 * 
+	 * @param row
+	 * @param col
+	 * @return
 	 */
-	public char getPlayerSymbol() {
-		return playerSymbol;
-	}
-
-	public void move(int row, int col) {
+	private boolean isFree(int row, int col) {
 		if (row > 3 || row < 1 || col > 3 || col < 1)
-			System.out.println("Invalid move!");
+			System.out.println("Invalid position!");
 
-		if (board[getIndex(row, col)] == EMPTY) {
-			board[getIndex(row, col)] = playerSymbol;
-		} else
-			System.out.println("Illegal move!");
+		if (board[getIndex(row, col)] == EMPTY)
+			return true;
+		return false;
 	}
 
+	private boolean isFree(int position) {
+		if (position < 1 || position > 9)
+			System.out.println("Invalid position!");
+		if (board[position - 1] == EMPTY)
+			return true;
+		return false;
+	}
 	/**
 	 * Prints the board
 	 */
@@ -87,12 +93,8 @@ public class TicTacToeGame {
 		System.out.println("Player has chosen: " + game.getPlayerSymbol());
 		System.out.println("initial:");
 		game.showBoard();
-		System.out.println("Enter row, column to move: ");
-		int row=sc.nextInt();
-		int col=sc.nextInt();
-		game.move(row, col);
-		System.out.println("after 1st move: ");
-		game.showBoard();
+		System.out.println("Enter position to move: ");
+		System.out.println(isFree(sc.nextInt() ? "FREE" : "OCCUPIED");
 		sc.close();
 
 	}
