@@ -16,7 +16,6 @@ public class TicTacToeGame {
 	TicTacToeGame() {
 		board = new char[10];
 		Arrays.fill(board, EMPTY);
-
 	}
 
 	public char getPlayerSymbol() {
@@ -41,7 +40,7 @@ public class TicTacToeGame {
 	 * 
 	 * @param playerSymbol
 	 */
-	public void choosePlayerSymbol(char playerSymbol) {
+	private void choosePlayerSymbol(char playerSymbol) {
 		if (playerSymbol == CROSS) {
 			this.playerSymbol = CROSS;
 			this.computerSymbol = ROUND;
@@ -132,16 +131,18 @@ public class TicTacToeGame {
 	/**
 	 * Toss to select who plays first
 	 */
-	private void toss() {
+	private int toss() {
 		int tossResult = (int) Math.floor(Math.random() * 10) % 2;
 		if (tossResult == 1) {
 			System.out.println("User plays first");
 			choosePlayerSymbol(CROSS);
-		}
-		else {
+			return 1;
+		} else {
 			System.out.println("Computer plays first");
 			choosePlayerSymbol(ROUND);
+			return 0;
 		}
+
 	}
 
 	/**
@@ -150,7 +151,7 @@ public class TicTacToeGame {
 	 * @param symbol user or computer symbol to check winning condition
 	 * @return zero if no winning condition is reached
 	 */
-	public int winningPosition(char symbol) {
+	private int winningPosition(char symbol) {
 		// horizontal
 		if (board[getIndex(1, 1)] == symbol && board[getIndex(1, 2)] == symbol && board[getIndex(1, 3)] == symbol)
 			return 1;
@@ -179,35 +180,49 @@ public class TicTacToeGame {
 
 	}
 
-	
 	/**
 	 * Random computer moves
 	 */
 	public void computerMove() {
-		Random random=new Random();
-		int move=random.nextInt(9)+1;
-		while(!isFree(move))
-			move=random.nextInt(9)+1;
-		board[move-1]=computerSymbol;
+		Random random = new Random();
+		int move = random.nextInt(9) + 1;
+		while (!isFree(move))
+			move = random.nextInt(9) + 1;
+		board[move - 1] = computerSymbol;
 		System.out.println("After computer move");
 		showBoard();
 	}
-	
+
+	public boolean hasPlayerWon() {
+		return winningPosition(playerSymbol) != 0;
+	}
+
+	public boolean hasComputerWon() {
+		return winningPosition(computerSymbol) != 0;
+	}
+
 	public static void main(String[] args) {
 		TicTacToeGame game = new TicTacToeGame();
 		Scanner sc = new Scanner(System.in);
-		game.toss();
+		int whoPlaysFirst = game.toss();
 		System.out.println("Player symbol is: " + game.getPlayerSymbol());
 		System.out.println("initial:");
 		game.showBoard();
-		
-		game.playerMove(1);
-		game.computerMove();
-		game.playerMove(5);
-		game.computerMove();
-		game.playerMove(9);
+		if (whoPlaysFirst == 0)
+			game.computerMove();
 
-		System.out.println(game.winningPosition(game.getPlayerSymbol()));
+		while (true) {
+			if (!game.hasComputerWon()) {
+				System.out.print("Enter position to play[1-9]: ");
+				game.playerMove(sc.nextInt());
+			}
+			if (!game.hasPlayerWon())
+				game.computerMove();
+			else
+				break;
+		}
+
+		System.out.println(game.hasPlayerWon() ? "YOU WON!" : "COMPUTER WON");
 		sc.close();
 
 	}
