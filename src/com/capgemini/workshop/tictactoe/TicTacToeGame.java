@@ -1,6 +1,7 @@
 package com.capgemini.workshop.tictactoe;
 
 import java.util.Arrays;
+import java.util.Random;
 import java.util.Scanner;
 
 public class TicTacToeGame {
@@ -16,6 +17,14 @@ public class TicTacToeGame {
 		board = new char[10];
 		Arrays.fill(board, EMPTY);
 
+	}
+
+	public char getPlayerSymbol() {
+		return playerSymbol;
+	}
+
+	public char getComputerSymbol() {
+		return computerSymbol;
 	}
 
 	/**
@@ -125,15 +134,19 @@ public class TicTacToeGame {
 	 */
 	private void toss() {
 		int tossResult = (int) Math.floor(Math.random() * 10) % 2;
-		if (tossResult == 1)
+		if (tossResult == 1) {
 			System.out.println("User plays first");
+			choosePlayerSymbol(CROSS);
+		}
 		else {
 			System.out.println("Computer plays first");
+			choosePlayerSymbol(ROUND);
 		}
 	}
 
 	/**
 	 * Shows the winning condition
+	 * 
 	 * @param symbol user or computer symbol to check winning condition
 	 * @return zero if no winning condition is reached
 	 */
@@ -166,19 +179,34 @@ public class TicTacToeGame {
 
 	}
 
+	
+	/**
+	 * Random computer moves
+	 */
+	public void computerMove() {
+		Random random=new Random();
+		int move=random.nextInt(9)+1;
+		while(!isFree(move))
+			move=random.nextInt(9)+1;
+		board[move-1]=computerSymbol;
+		System.out.println("After computer move");
+		showBoard();
+	}
+	
 	public static void main(String[] args) {
 		TicTacToeGame game = new TicTacToeGame();
 		Scanner sc = new Scanner(System.in);
-		System.out.println("Choose a symbol (X or O): ");
-		String symbol = sc.next();
-		game.choosePlayerSymbol(symbol.charAt(0));
-		System.out.println("Player has chosen: " + game.getPlayerSymbol());
+		game.toss();
+		System.out.println("Player symbol is: " + game.getPlayerSymbol());
 		System.out.println("initial:");
 		game.showBoard();
-		game.playerMove(1);
-		game.playerMove(5);
-		game.playerMove(9);
 		
+		game.playerMove(1);
+		game.computerMove();
+		game.playerMove(5);
+		game.computerMove();
+		game.playerMove(9);
+
 		System.out.println(game.winningPosition(game.getPlayerSymbol()));
 		sc.close();
 
