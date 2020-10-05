@@ -66,6 +66,42 @@ public class TicTacToeGame {
 			return true;
 		return false;
 	}
+
+	/**
+	 * Player move
+	 * 
+	 * @param row Row position to move
+	 * @param col Column position to move
+	 */
+	public void playerMove(int row, int col) {
+		if (row > 3 || row < 1 || col > 3 || col < 1) {
+			System.out.println("Invalid move!");
+			return;
+		}
+
+		if (isFree(row, col)) {
+			board[getIndex(row, col)] = playerSymbol;
+			System.out.println("After player move");
+			showBoard();
+		} else
+			System.out.println("Illegal move!");
+
+	}
+
+	public void playerMove(int position) {
+		if (position < 1 || position > 9) {
+			System.out.println("Invalid move!");
+			return;
+		}
+
+		if (isFree(position)) {
+			board[position - 1] = playerSymbol;
+			System.out.println("After player move");
+			showBoard();
+		} else
+			System.out.println("Illegal move!");
+	}
+
 	/**
 	 * Prints the board
 	 */
@@ -84,6 +120,18 @@ public class TicTacToeGame {
 		}
 	}
 
+	/**
+	 * Toss to select who plays first
+	 */
+	private void toss() {
+		int tossResult = (int) Math.floor(Math.random() * 10) % 2;
+		if (tossResult == 1)
+			System.out.println("User plays first");
+		else {
+			System.out.println("Computer plays first");
+		}
+	}
+
 	public static void main(String[] args) {
 		TicTacToeGame game = new TicTacToeGame();
 		Scanner sc = new Scanner(System.in);
@@ -93,8 +141,7 @@ public class TicTacToeGame {
 		System.out.println("Player has chosen: " + game.getPlayerSymbol());
 		System.out.println("initial:");
 		game.showBoard();
-		System.out.println("Enter position to move: ");
-		System.out.println(isFree(sc.nextInt() ? "FREE" : "OCCUPIED");
+		game.toss();
 		sc.close();
 
 	}
