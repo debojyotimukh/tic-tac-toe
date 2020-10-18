@@ -236,12 +236,28 @@ public class TicTacToeGame {
 		List<Integer> corners = Arrays.asList(1, 3, 7, 9);
 		List<Integer> emptyCorners = corners.stream().filter(position -> this.isFree(position))
 				.collect(Collectors.toList());
-				
+
 		if (emptyCorners.isEmpty())
 			return -1;
 
 		Collections.shuffle(emptyCorners);
 		return emptyCorners.get(0);
+	}
+
+	public int getEmptyCentreOrNonCorner() {
+		// check if center is empty
+		if (isFree(5))
+			return 5;
+		// then check for non-corner sides
+		List<Integer> nonCornerSides = Arrays.asList(2, 4, 6, 8);
+		List<Integer> emptyNonCornerSides = nonCornerSides.stream().filter(position -> this.isFree(position))
+				.collect(Collectors.toList());
+
+		if (emptyNonCornerSides.isEmpty())
+			return -1;
+
+		Collections.shuffle(emptyNonCornerSides);
+		return emptyNonCornerSides.get(0);
 	}
 
 	public boolean hasPlayerWon() {
