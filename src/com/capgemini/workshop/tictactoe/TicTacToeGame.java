@@ -209,7 +209,7 @@ public class TicTacToeGame {
 		for (int position = 1; position <= 9; position++) {
 			if (temp.isFree(position)) {
 				temp.playerMove(position);
-				if (temp.winningPosition(this.playerSymbol) != 0) {
+				if (temp.hasPlayerWon()) {
 					winningPosition = temp.winningPosition(this.playerSymbol);
 					break;
 				}
