@@ -41,6 +41,7 @@ public class TicTacToeGame {
 	public char getComputerSymbol() {
 		return computerSymbol;
 	}
+	
 
 	public boolean isOver() {
 		return moveCount >= 9;
@@ -202,13 +203,11 @@ public class TicTacToeGame {
 	}
 
 	/**
-	 * Computer moves\
+	 * Computer moves
 	 */
 	public void computerMove() {
-		Random random = new Random();
-		int move = random.nextInt(9) + 1;
-		while (!isFree(move))
-			move = random.nextInt(9) + 1;
+		int move = getBestComputerMove();
+		if(move==-1) return;
 		board[move - 1] = computerSymbol;
 		moveCount++;
 	}
@@ -253,6 +252,28 @@ public class TicTacToeGame {
 
 	public boolean hasComputerWon() {
 		return winningPosition(computerSymbol) != 0;
+	}
+
+	private int getBestComputerMove() {
+		if(isOver()) return -1;
+		// first: block player's winning move
+		int move = nextWinningMovePosition();
+		if (move != -1)
+			return move;
+		// else: try to find empty corner
+		move = getEmptyCorner();
+		if (move != -1)
+			return move;
+		// else: try to find empty center or non-corner move
+		move = getEmptyCentreOrNonCorner();
+		if (move != -1)
+			return move;
+		// settle for a random position
+		Random random = new Random();
+		move = random.nextInt(9) + 1;
+		while (!isFree(move))
+			move = random.nextInt(9) + 1;
+		return move;
 	}
 
 	private int getEmptyCentreOrNonCorner() {
@@ -303,17 +324,17 @@ public class TicTacToeGame {
 				break;
 			}
 			if (game.isOver()) {
+				System.out.println("DRAW!");
 				break;
 			}
 		}
 
 		sc.close();
 
-		if (!(game.hasPlayerWon() || game.hasComputerWon())) {
-			System.out.println("DRAW!");
-			return;
-		}
+	}
 
+	public int getMoveCount() {
+		return moveCount;
 	}
 
 }
