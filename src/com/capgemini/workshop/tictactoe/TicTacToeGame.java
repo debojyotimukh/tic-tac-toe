@@ -18,6 +18,14 @@ public class TicTacToeGame {
 		Arrays.fill(board, EMPTY);
 	}
 
+	private TicTacToeGame(char[] board) {
+		this.board = board;
+	}
+
+	public TicTacToeGame getCopy() {
+		return new TicTacToeGame(this.board);
+	}
+
 	public char getPlayerSymbol() {
 		return playerSymbol;
 	}
@@ -40,7 +48,7 @@ public class TicTacToeGame {
 	 * 
 	 * @param playerSymbol
 	 */
-	private void choosePlayerSymbol(char playerSymbol) {
+	public void choosePlayerSymbol(char playerSymbol) {
 		if (playerSymbol == CROSS) {
 			this.playerSymbol = CROSS;
 			this.computerSymbol = ROUND;
@@ -191,6 +199,24 @@ public class TicTacToeGame {
 		board[move - 1] = computerSymbol;
 		System.out.println("After computer move");
 		showBoard();
+	}
+
+	public int nextWinnigMovePosition(char[] board, char character) {
+		TicTacToeGame temp = this.getCopy();
+
+		temp.choosePlayerSymbol(this.playerSymbol);
+		int winningPosition = -1;
+		for (int position = 1; position <= 9; position++) {
+			if (temp.isFree(position)) {
+				temp.playerMove(position);
+				if (temp.winningPosition(this.playerSymbol) != 0) {
+					winningPosition = temp.winningPosition(this.playerSymbol);
+					break;
+				}
+			}
+		}
+
+		return winningPosition;
 	}
 
 	public boolean hasPlayerWon() {
