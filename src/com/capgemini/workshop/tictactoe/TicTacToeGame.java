@@ -23,13 +23,15 @@ public class TicTacToeGame {
 		this.moveCount = 0;
 	}
 
-	private TicTacToeGame(char[] board) {
+	private TicTacToeGame(char[] board, char playerSymbol, char computerSymbol, int moves) {
 		this.board = board;
-		this.moveCount = 0;
+		this.playerSymbol = playerSymbol;
+		this.computerSymbol = computerSymbol;
+		this.moveCount = moves;
 	}
 
-	public TicTacToeGame getCopy() {
-		return new TicTacToeGame(this.board);
+	private TicTacToeGame getCopy() {
+		return new TicTacToeGame(Arrays.copyOf(this.board, 10), this.playerSymbol, this.computerSymbol, this.moveCount);
 	}
 
 	public char getPlayerSymbol() {
@@ -41,7 +43,7 @@ public class TicTacToeGame {
 	}
 
 	public boolean isOver() {
-		return moveCount == 9;
+		return moveCount >= 9;
 	}
 
 	/**
@@ -123,9 +125,8 @@ public class TicTacToeGame {
 
 		if (isFree(position)) {
 			board[position - 1] = playerSymbol;
-			System.out.println("After player move");
 			moveCount++;
-			showBoard();
+
 		} else
 			System.out.println("Illegal move!");
 	}
@@ -201,7 +202,7 @@ public class TicTacToeGame {
 	}
 
 	/**
-	 * Random computer moves
+	 * Computer moves\
 	 */
 	public void computerMove() {
 		Random random = new Random();
@@ -209,12 +210,12 @@ public class TicTacToeGame {
 		while (!isFree(move))
 			move = random.nextInt(9) + 1;
 		board[move - 1] = computerSymbol;
-		System.out.println("After computer move");
 		moveCount++;
-		showBoard();
 	}
 
-	public int nextWinnigMovePosition(char[] board, char character) {
+	private int nextWinningMovePosition() {
+		if (moveCount < 2)
+			return -1;
 		TicTacToeGame temp = this.getCopy();
 
 		temp.choosePlayerSymbol(this.playerSymbol);
@@ -223,16 +224,18 @@ public class TicTacToeGame {
 			if (temp.isFree(position)) {
 				temp.playerMove(position);
 				if (temp.hasPlayerWon()) {
-					winningPosition = temp.winningPosition(this.playerSymbol);
+					winningPosition = position;
 					break;
 				}
+				temp = this.getCopy();
+
 			}
 		}
 
 		return winningPosition;
 	}
 
-	public int getEmptyCorner() {
+	private int getEmptyCorner() {
 		List<Integer> corners = Arrays.asList(1, 3, 7, 9);
 		List<Integer> emptyCorners = corners.stream().filter(position -> this.isFree(position))
 				.collect(Collectors.toList());
@@ -244,7 +247,15 @@ public class TicTacToeGame {
 		return emptyCorners.get(0);
 	}
 
-	public int getEmptyCentreOrNonCorner() {
+	public boolean hasPlayerWon() {
+		return winningPosition(playerSymbol) != 0;
+	}
+
+	public boolean hasComputerWon() {
+		return winningPosition(computerSymbol) != 0;
+	}
+
+	private int getEmptyCentreOrNonCorner() {
 		// check if center is empty
 		if (isFree(5))
 			return 5;
@@ -260,14 +271,6 @@ public class TicTacToeGame {
 		return emptyNonCornerSides.get(0);
 	}
 
-	public boolean hasPlayerWon() {
-		return winningPosition(playerSymbol) != 0;
-	}
-
-	public boolean hasComputerWon() {
-		return winningPosition(computerSymbol) != 0;
-	}
-
 	public static void main(String[] args) {
 		TicTacToeGame game = new TicTacToeGame();
 		Scanner sc = new Scanner(System.in);
@@ -275,24 +278,42 @@ public class TicTacToeGame {
 		System.out.println("Player symbol is: " + game.getPlayerSymbol());
 		System.out.println("initial:");
 		game.showBoard();
-		if (whoPlaysFirst == 0)
+		if (whoPlaysFirst == 0) {
 			game.computerMove();
+			System.out.println("After computer move");
+			game.showBoard();
+		}
 
-		while (!game.isOver()) {
+		while (true) {
 			if (!game.hasComputerWon()) {
 				System.out.print("Enter position to play[1-9]: ");
 				game.playerMove(sc.nextInt());
+				System.out.println("After player move");
+				game.showBoard();
+			} else {
+				System.out.println("COMPUTER WINS!");
+				break;
 			}
-			if (!game.hasPlayerWon())
+			if (!game.hasPlayerWon()) {
 				game.computerMove();
+				System.out.println("After computer move");
+				game.showBoard();
+			} else {
+				System.out.println("YOU WIN!");
+				break;
+			}
+			if (game.isOver()) {
+				break;
+			}
 		}
+
 		sc.close();
-		if (!(game.hasPlayerWon() && game.hasComputerWon())) {
+
+		if (!(game.hasPlayerWon() || game.hasComputerWon())) {
 			System.out.println("DRAW!");
 			return;
 		}
 
-		System.out.println(game.hasPlayerWon() ? "YOU WON!" : "COMPUTER WON");
-
 	}
+
 }
