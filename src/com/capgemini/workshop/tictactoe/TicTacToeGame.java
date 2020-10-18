@@ -46,6 +46,10 @@ public class TicTacToeGame {
 		return moveCount >= 9;
 	}
 
+	public int getMoveCount() {
+		return moveCount;
+	}
+
 	/**
 	 * @param row Row position on the board
 	 * @param col Column position on the board
@@ -212,6 +216,29 @@ public class TicTacToeGame {
 		moveCount++;
 	}
 
+	private int getBestComputerMove() {
+		if (isOver())
+			return -1;
+		// first: block player's winning move
+		int move = nextWinningMovePosition();
+		if (move != -1)
+			return move;
+		// else: try to find empty corner
+		move = getEmptyCorner();
+		if (move != -1)
+			return move;
+		// else: try to find empty center or non-corner move
+		move = getEmptyCentreOrNonCorner();
+		if (move != -1)
+			return move;
+		// settle for a random position
+		Random random = new Random();
+		move = random.nextInt(9) + 1;
+		while (!isFree(move))
+			move = random.nextInt(9) + 1;
+		return move;
+	}
+
 	private int nextWinningMovePosition() {
 		if (moveCount < 2)
 			return -1;
@@ -246,37 +273,6 @@ public class TicTacToeGame {
 		return emptyCorners.get(0);
 	}
 
-	public boolean hasPlayerWon() {
-		return winningPosition(playerSymbol) != 0;
-	}
-
-	public boolean hasComputerWon() {
-		return winningPosition(computerSymbol) != 0;
-	}
-
-	private int getBestComputerMove() {
-		if (isOver())
-			return -1;
-		// first: block player's winning move
-		int move = nextWinningMovePosition();
-		if (move != -1)
-			return move;
-		// else: try to find empty corner
-		move = getEmptyCorner();
-		if (move != -1)
-			return move;
-		// else: try to find empty center or non-corner move
-		move = getEmptyCentreOrNonCorner();
-		if (move != -1)
-			return move;
-		// settle for a random position
-		Random random = new Random();
-		move = random.nextInt(9) + 1;
-		while (!isFree(move))
-			move = random.nextInt(9) + 1;
-		return move;
-	}
-
 	private int getEmptyCentreOrNonCorner() {
 		// check if center is empty
 		if (isFree(5))
@@ -291,6 +287,14 @@ public class TicTacToeGame {
 
 		Collections.shuffle(emptyNonCornerSides);
 		return emptyNonCornerSides.get(0);
+	}
+
+	public boolean hasPlayerWon() {
+		return winningPosition(playerSymbol) != 0;
+	}
+
+	public boolean hasComputerWon() {
+		return winningPosition(computerSymbol) != 0;
 	}
 
 	public static void main(String[] args) {
@@ -338,10 +342,6 @@ public class TicTacToeGame {
 		else
 			sc.close();
 
-	}
-
-	public int getMoveCount() {
-		return moveCount;
 	}
 
 }
