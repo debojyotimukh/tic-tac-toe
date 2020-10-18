@@ -41,7 +41,6 @@ public class TicTacToeGame {
 	public char getComputerSymbol() {
 		return computerSymbol;
 	}
-	
 
 	public boolean isOver() {
 		return moveCount >= 9;
@@ -207,7 +206,8 @@ public class TicTacToeGame {
 	 */
 	public void computerMove() {
 		int move = getBestComputerMove();
-		if(move==-1) return;
+		if (move == -1)
+			return;
 		board[move - 1] = computerSymbol;
 		moveCount++;
 	}
@@ -255,7 +255,8 @@ public class TicTacToeGame {
 	}
 
 	private int getBestComputerMove() {
-		if(isOver()) return -1;
+		if (isOver())
+			return -1;
 		// first: block player's winning move
 		int move = nextWinningMovePosition();
 		if (move != -1)
@@ -329,7 +330,13 @@ public class TicTacToeGame {
 			}
 		}
 
-		sc.close();
+		System.out.println("Play again? (y/n): ");
+		String choice = sc.next();
+		sc.nextLine();
+		if (choice.equalsIgnoreCase("Y"))
+			TicTacToeGame.main(args);
+		else
+			sc.close();
 
 	}
 
