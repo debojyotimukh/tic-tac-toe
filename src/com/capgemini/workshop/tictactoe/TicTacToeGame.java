@@ -1,8 +1,11 @@
 package com.capgemini.workshop.tictactoe;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class TicTacToeGame {
 	private static final char EMPTY = ' ';
@@ -12,14 +15,17 @@ public class TicTacToeGame {
 	private char playerSymbol;
 	private char computerSymbol;
 	private char[] board;
+	private int moveCount;
 
 	TicTacToeGame() {
 		board = new char[10];
 		Arrays.fill(board, EMPTY);
+		this.moveCount = 0;
 	}
 
 	private TicTacToeGame(char[] board) {
 		this.board = board;
+		this.moveCount = 0;
 	}
 
 	public TicTacToeGame getCopy() {
@@ -32,6 +38,10 @@ public class TicTacToeGame {
 
 	public char getComputerSymbol() {
 		return computerSymbol;
+	}
+
+	public boolean isOver() {
+		return moveCount == 9;
 	}
 
 	/**
@@ -98,6 +108,7 @@ public class TicTacToeGame {
 		if (isFree(row, col)) {
 			board[getIndex(row, col)] = playerSymbol;
 			System.out.println("After player move");
+			moveCount++;
 			showBoard();
 		} else
 			System.out.println("Illegal move!");
@@ -113,6 +124,7 @@ public class TicTacToeGame {
 		if (isFree(position)) {
 			board[position - 1] = playerSymbol;
 			System.out.println("After player move");
+			moveCount++;
 			showBoard();
 		} else
 			System.out.println("Illegal move!");
@@ -198,6 +210,7 @@ public class TicTacToeGame {
 			move = random.nextInt(9) + 1;
 		board[move - 1] = computerSymbol;
 		System.out.println("After computer move");
+		moveCount++;
 		showBoard();
 	}
 
@@ -219,6 +232,18 @@ public class TicTacToeGame {
 		return winningPosition;
 	}
 
+	public int getEmptyCorner() {
+		List<Integer> corners = Arrays.asList(1, 3, 7, 9);
+		List<Integer> emptyCorners = corners.stream().filter(position -> this.isFree(position))
+				.collect(Collectors.toList());
+				
+		if (emptyCorners.isEmpty())
+			return -1;
+
+		Collections.shuffle(emptyCorners);
+		return emptyCorners.get(0);
+	}
+
 	public boolean hasPlayerWon() {
 		return winningPosition(playerSymbol) != 0;
 	}
@@ -237,19 +262,21 @@ public class TicTacToeGame {
 		if (whoPlaysFirst == 0)
 			game.computerMove();
 
-		while (true) {
+		while (!game.isOver()) {
 			if (!game.hasComputerWon()) {
 				System.out.print("Enter position to play[1-9]: ");
 				game.playerMove(sc.nextInt());
 			}
 			if (!game.hasPlayerWon())
 				game.computerMove();
-			else
-				break;
+		}
+		sc.close();
+		if (!(game.hasPlayerWon() && game.hasComputerWon())) {
+			System.out.println("DRAW!");
+			return;
 		}
 
 		System.out.println(game.hasPlayerWon() ? "YOU WON!" : "COMPUTER WON");
-		sc.close();
 
 	}
 }
